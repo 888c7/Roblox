@@ -150,7 +150,8 @@ local function InstanceToLua(part)
 	}
 end
 
+local args = ...
 local success, output = pcall(function()
-	InstanceToLua(...)
+	InstanceToLua(args)
 end)
 return output;
