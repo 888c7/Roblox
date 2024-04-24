@@ -100,7 +100,6 @@ local function instanceToLua(part)
 		if (indentLvl ~= 0) then
 			codeBuilder[#codeBuilder + 1] = "\n" .. indent
 		end
-		print(objectIds[obj], newClassName)
 		codeBuilder[#codeBuilder + 1] = "{\n" .. indent .. "\tID = " .. objectIds[obj] .. ";\n" .. indent .. "\tType = \"" .. newClassName .. "\";\n" .. indent .. "\tProperties = {"
 		local props = GetProperties(obj, newClassName)
 		if (next(props)) then
@@ -124,7 +123,6 @@ local function instanceToLua(part)
 	end
 	objectIds[selectedItem] = idCount
 	for _,v in pairs(selectedItem:GetDescendants()) do
-		print(v)
 		idCount = (idCount + 1)
 		objectIds[v] = idCount
 	end
