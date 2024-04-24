@@ -1,5 +1,6 @@
 --[[
-DOCS
+
+DOCUMENTS
 
 return: nil - opens the script in Windows using websocket
 
@@ -8,7 +9,8 @@ loadstring(game:HttpGet("https://github.com/v1zoy/Roblox/edit/main/SaveInstance/
 
 - roblox studio
 loadstring(game.HttpService:GetAsync("https://github.com/v1zoy/Roblox/edit/main/SaveInstance/InstancesToLua.lua"))( Instance )
-]]
+
+--]]
 
 function request(url)
 	if game.RunService:IsServer() then
