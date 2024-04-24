@@ -50,7 +50,9 @@ local function stringify(v, spaces, usesemicolon, depth)
 	return `{table.concat(concatenationBuilder):sub(1,-2)}\n{space:sub(1, -spaces-1)}};`
 end
 
+local argsRoot = ({...})[1]
+local argsProperties = ({...})[2] or {}
 
-local root = ... :: table
-local allowPropety = {'Type', 'Name', 'Image', 'Text'}
-print(stringify(removeProperties(root, allowPropety)))
+local root = argsRoot :: table
+local allowProperty = {'Type', 'Name', 'Image', 'Text'} ; table.move(argsProperties, 1,#argsProperties, #allowProperty+1,allowProperty)
+return stringify(removeProperties(root, allowProperty)
