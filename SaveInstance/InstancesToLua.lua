@@ -5,10 +5,10 @@ DOCUMENTS
 return: nil - opens the script in Windows using websocket
 
 - exploiting
-loadstring(game:HttpGet("https://github.com/v1zoy/Roblox/edit/main/SaveInstance/InstancesToLua.lua"))( Instance )
+loadstring(game:HttpGet("https://github.com/v1zoy/Roblox/edit/main/SaveInstance/InstancesToLua.lua"))( game.Workspace )
 
 - roblox studio
-loadstring(game.HttpService:GetAsync("https://github.com/v1zoy/Roblox/edit/main/SaveInstance/InstancesToLua.lua"))( Instance )
+loadstring(game:GetService("HttpService"):GetAsync("https://github.com/v1zoy/Roblox/edit/main/SaveInstance/InstancesToLua.lua"))( game.Workspace )
 
 ]] --
 
