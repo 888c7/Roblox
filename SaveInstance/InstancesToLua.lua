@@ -7,10 +7,19 @@ return: nil - opens the script in Windows using websocket
 loadstring(game:HttpGet("https://github.com/v1zoy/Roblox/edit/main/SaveInstance/InstancesToLua.lua"))( Instance )
 
 - roblox studio
-loadstring(game.HttpService:GetAsync(("https://github.com/v1zoy/Roblox/edit/main/SaveInstance/InstancesToLua.lua"))( Instance )
---]]
-local PropertyToString = loadstring(game:HttpGet("https://raw.githubusercontent.com/v1zoy/Roblox/main/SaveInstance/PropertyToString.lua"))()
-local API = loadstring(game:HttpGet("https://raw.githubusercontent.com/v1zoy/Roblox/main/SaveInstance/API.lua"))()
+loadstring(game.HttpService:GetAsync("https://github.com/v1zoy/Roblox/edit/main/SaveInstance/InstancesToLua.lua"))( Instance )
+]]
+
+function request(url)
+	if game.RunService:IsServer() then
+		return game.HttpService:GetAsync(url);
+	else
+		return game:HttpGet(url);
+	end
+end)
+
+local PropertyToString = loadstring(request("https://raw.githubusercontent.com/v1zoy/Roblox/main/SaveInstance/PropertyToString.lua"))()
+local API = loadstring(request("https://raw.githubusercontent.com/v1zoy/Roblox/main/SaveInstance/API.lua"))()
 
 local apiFetched = false
 local function instanceToLua(part)
