@@ -55,4 +55,4 @@ local argsProperties = ({...})[2] or {}
 
 local root = argsRoot :: table
 local allowProperty = {'Type', 'Name', 'Image', 'Text'} ; table.move(argsProperties, 1,#argsProperties, #allowProperty+1,allowProperty)
-return stringify(removeProperties(root, allowProperty)
+return stringify(removeProperties(root, allowProperty))
