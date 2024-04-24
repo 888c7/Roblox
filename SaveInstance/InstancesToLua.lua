@@ -1,10 +1,15 @@
-local function partToLua(part)
+-- loadstring(game:HttpGet("https://github.com/v1zoy/Roblox/edit/main/SaveInstance/InstancesToLua.lua"))( Instance: Instance ): "opens the script in Windows using websocket"
+
+local PropertyToString = loadstring(game:HttpGet("https://raw.githubusercontent.com/v1zoy/Roblox/main/SaveInstance/PropertyToString.lua"))()
+local API = loadstring(game:HttpGet("https://raw.githubusercontent.com/v1zoy/Roblox/main/SaveInstance/API.lua"))()
+
+local apiFetched = false
+local function instanceToLua(part)
 	local selectedItem = part
 	local awaitReference = {}
 	local defaultObjects = {}
 	setmetatable(defaultObjects, {
 		__index = function(self, index)
-			local b = {'TouchTransmitter'}
 			local obj = Instance.new(index)
 			rawset(defaultObjects, index, obj)
 			return obj
@@ -27,7 +32,6 @@ local function partToLua(part)
 	local objectIds = {}
 	local function GetProperties(obj)
 		local properties = {}
-		print(obj, obj.ClassName)
 		local default = defaultObjects[obj.ClassName]
 		local class = API.ClassesByName[obj.ClassName]
 		for propName,propInfo in pairs(class:GetAllProperties(true)) do
@@ -46,7 +50,7 @@ local function partToLua(part)
 		return properties
 	end
 	local function Scan(obj, indentLvl)
-		local b = {'TouchTransmitter','Workspace','Terrain'}
+		local b = {'TouchTransmitter', 'Workspace'}
 		if table.find(b,obj.ClassName) then return end
 		local indent = ("\t"):rep(indentLvl)
 		if (indentLvl ~= 0) then
@@ -75,20 +79,22 @@ local function partToLua(part)
 	end
 	objectIds[selectedItem] = idCount
 	for _,v in pairs(selectedItem:GetDescendants()) do
+		print(v)
 		idCount = (idCount + 1)
 		objectIds[v] = idCount
 	end
 	Scan(selectedItem, 0)
 	codeBuilder[#codeBuilder + 1] = "local function Scan(item, parent) local obj = Instance.new(item.Type) if (item.ID) then local awaiting = awaitRef[item.ID] if (awaiting) then awaiting[1][awaiting[2]] = obj awaitRef[item.ID] = nil else partsWithId[item.ID] = obj end end for p,v in pairs(item.Properties) do if (type(v) == \"string\") then local id = tonumber(v:match(\"^_R:(%w+)_$\")) if (id) then if (partsWithId[id]) then v = partsWithId[id] else awaitRef[id] = {obj, p} v = nil end end end obj[p] = v end for _,c in pairs(item.Children) do Scan(c, obj) end obj.Parent = parent return obj end\nScan(root, workspace)"
-local source = table.concat(codeBuilder, "")
+	local source = table.concat(codeBuilder, "")
 	
+	local jsonData = game:GetService('HttpService'):JSONEncode({script = source})
 	syn.request({
-Url = 'http://172.16.0.31:80',
+		Url = 'http://172.16.0.31:80',
+		Method = "POST",
 		Headers = {
-			script = source
+			["Content-Type"] = "application/json"
 		},
-		Method = "GET",
+		Body = jsonData
 	})
 end
-
-partToLua(...)
+instanceToLua(...)
