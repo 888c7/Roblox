@@ -1,8 +1,18 @@
 local API = {}
 local API_URL = "https://anaminus.github.io/rbx/json/api/latest.json"
+
+function getRequest(url)
+	local success, error = pcall(function()
+		return game:HttpGet(url);
+	end)
+	if not success then
+		return HS:GetAsync(url);
+	end
+end
+
 function FetchAPI()
 	local successGetAsync, data = pcall(function()
-		return game:HttpGet(API_URL)
+		return getRequest(API_URL)
 	end)
 	if (not successGetAsync) then
 		warn("Failed to fetch Roblox API: " .. tostring(data))
