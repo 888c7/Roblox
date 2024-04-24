@@ -1,5 +1,6 @@
 local API = {}
 local API_URL = "https://anaminus.github.io/rbx/json/api/latest.json"
+local HS = game:GetService("HttpService")
 
 function getRequest(url)
 	local success, error = pcall(function()
