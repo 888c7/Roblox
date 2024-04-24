@@ -134,5 +134,6 @@ local function instanceToLua(part)
 	local jsonData = HS:JSONEncode({script = source, name = game.placeId..'-'..parent..selectedItem:GetFullName()})
 	print("Saving Instance(s)...")
 	httpPostRequest(jsonData)
+	return source
 end
-instanceToLua(...)
+return instanceToLua(...)
