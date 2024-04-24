@@ -1,5 +1,14 @@
--- loadstring(game:HttpGet("https://github.com/v1zoy/Roblox/edit/main/SaveInstance/InstancesToLua.lua"))( Instance: Instance ): "opens the script in Windows using websocket"
+--[[
+DOCS
 
+return: nil - opens the script in Windows using websocket
+
+- exploiting
+loadstring(game:HttpGet("https://github.com/v1zoy/Roblox/edit/main/SaveInstance/InstancesToLua.lua"))( Instance )
+
+- roblox studio
+loadstring(game.HttpService:GetAsync(("https://github.com/v1zoy/Roblox/edit/main/SaveInstance/InstancesToLua.lua"))( Instance )
+--]]
 local PropertyToString = loadstring(game:HttpGet("https://raw.githubusercontent.com/v1zoy/Roblox/main/SaveInstance/PropertyToString.lua"))()
 local API = loadstring(game:HttpGet("https://raw.githubusercontent.com/v1zoy/Roblox/main/SaveInstance/API.lua"))()
 
