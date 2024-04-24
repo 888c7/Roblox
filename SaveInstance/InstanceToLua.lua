@@ -37,6 +37,13 @@ function httpPostRequest(jsonData)
 		})
 	end	
 end
+local function deepCopy(original)
+	local copy = {}
+	for k, v in pairs(original) do
+		copy[k] = type(v) == "table" and deepCopy(v) or v
+	end
+	return copy
+end
 
 local PropertyToString = loadstring(getRequest("https://raw.githubusercontent.com/v1zoy/Roblox/main/SaveInstance/PropertyToString.lua"))()
 local API = loadstring(getRequest("https://raw.githubusercontent.com/v1zoy/Roblox/main/SaveInstance/API.lua"))()
@@ -52,7 +59,7 @@ local classConverter = {
 	'ServerStorage',
 	'Lightning',
 }
-local function instanceToLua(part)
+local function InstanceToLua(part)
 	local selectedItem = part
 	local awaitReference = {}
 	local defaultObjects = {}
@@ -127,13 +134,19 @@ local function instanceToLua(part)
 		objectIds[v] = idCount
 	end
 	Scan(selectedItem, 0)
+	local variables = table.concat(codeBuilder, "") 
 	codeBuilder[#codeBuilder + 1] = "local function Scan(item, parent) local obj = Instance.new(item.Type) if (item.ID) then local awaiting = awaitRef[item.ID] if (awaiting) then awaiting[1][awaiting[2]] = obj awaitRef[item.ID] = nil else partsWithId[item.ID] = obj end end for p,v in pairs(item.Properties) do if (type(v) == \"string\") then local id = tonumber(v:match(\"^_R:(%w+)_$\")) if (id) then if (partsWithId[id]) then v = partsWithId[id] else awaitRef[id] = {obj, p} v = nil end end end obj[p] = v end for _,c in pairs(item.Children) do Scan(c, obj) end obj.Parent = parent return obj end\nScan(root, workspace)"
 	local source = table.concat(codeBuilder, "")
-	
+
 	local parent = 'game.'
 	local jsonData = HS:JSONEncode({script = source, name = game.placeId..'-'..parent..selectedItem:GetFullName()})
 	print("Saving Instance(s)...")
 	httpPostRequest(jsonData)
-	return source
+	return {
+		source = source,
+		getRoot = function()
+			return loadstring(`{variables} return root;`)()
+		end,
+	}
 end
-return instanceToLua(...)
+return InstanceToLua(...)
