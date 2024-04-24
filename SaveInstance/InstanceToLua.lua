@@ -57,7 +57,7 @@ local classConverter = {
 	'Players',
 	'ServerScriptService',
 	'ServerStorage',
-	'Lightning',
+	'Lighting',
 }
 local function InstanceToLua(part)
 	local selectedItem = part
@@ -152,6 +152,6 @@ end
 
 local args = ...
 local success, output = pcall(function()
-	InstanceToLua(args)
+	return InstanceToLua(args)
 end)
 return output;
