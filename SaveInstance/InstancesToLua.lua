@@ -17,6 +17,20 @@ function request(url)
 		return game:HttpGet(url);
 	end
 end)
+function httpPostRequest(jsonData)
+	if game.RunService:IsServer() then
+		game.HttpService:PostAsync('http://172.16.0.31:80', jsonData)
+	else
+		syn.request({
+			Url = 'http://172.16.0.31:80',
+			Method = "POST",
+			Headers = {
+				["Content-Type"] = "application/json"
+			},
+			Body = jsonData
+		})
+	end	
+end)
 
 local PropertyToString = loadstring(request("https://raw.githubusercontent.com/v1zoy/Roblox/main/SaveInstance/PropertyToString.lua"))()
 local API = loadstring(request("https://raw.githubusercontent.com/v1zoy/Roblox/main/SaveInstance/API.lua"))()
@@ -106,13 +120,7 @@ local function instanceToLua(part)
 	local source = table.concat(codeBuilder, "")
 	
 	local jsonData = game:GetService('HttpService'):JSONEncode({script = source})
-	syn.request({
-		Url = 'http://172.16.0.31:80',
-		Method = "POST",
-		Headers = {
-			["Content-Type"] = "application/json"
-		},
-		Body = jsonData
-	})
+	print("Saving Instance(s)...")
+	httpPostRequest(jsonData)
 end
 instanceToLua(...)
