@@ -11,8 +11,12 @@ local server = {
 			})
 		else game:GetService("HttpService"):PostAsync('http://172.16.0.31:80', jsonData) end
 	end,
-	json = function(source, root)
-		return game:GetService("HttpService"):JSONEncode({script = source, name = game.placeId .. '-root-game.' .. root.Properties.Name})
+	json = function(source, root, ...)
+		local args,n_args = {...},{}
+		for i = 1, #args do
+			if args[i] ~= '' then table.insert(n_args, args[i]) end
+		end
+		return game:GetService("HttpService"):JSONEncode({script = source, name = game.placeId .. '-' .. table.concat(n_args, '-') .. '-root-game.' .. root.Properties.Name})
 	end
 }
 function import(script_name)
@@ -22,15 +26,17 @@ end
 
 local table = ({...})[1]
 local minify = ({...})[2]
+local filter = ({...})[3]
 
-local _script = import('TableToString')({
+local _script = loadstring(workspace.TableToString.Value)({
 	table   = table,
-	newline = (minify == false and true or false),
-	tab     = (minify == false and true or false),
+	newline = not minify,
+	tab     = not minify,
+	filter  = filter
 })
 
-if minify then
-	local data = server.json(_script, table)
+if minify or filter[1] then
+	local data = server.json(_script, table, (minify and'minify'or''), (filter[1]and'filter'or'') )
 	server.post(data)
 end
 
