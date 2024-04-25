@@ -17,7 +17,7 @@ local Keywords = { ['and'] = true, ['break'] = true, ['do'] = true, ['else'] = t
 local Functions = game:GetService('HttpService'):GetAsync('https://raw.githubusercontent.com/v1zoy/Roblox/main/SaveInstance/functions.lua')
 
 function GetHierarchy(Object)
-    local Hierarchy = {}
+	local Hierarchy = {}
 	local Parent = Object
 	local ChainLength = 0
 	while Parent do
@@ -54,14 +54,54 @@ local function SerializeType(Value, Class)
 		return tostring(Value)
 	end
 end
-local Tab,Newline
-local function TableToString(TableData, IgnoredTables, DepthData, Path)
-	local Table = TableData.table or TableData
-
-	if TableData.newline then
-		Tab = TableData.tab
-		Newline = TableData.newline
+local function deepCopy(original)
+	local copy = {}
+	for k, v in pairs(original) do
+		if type(v) == "table" then
+			v = deepCopy(v)
+		end
+		copy[k] = v
 	end
+	return copy
+end
+local function removeProperties(obj, allowProperty)
+	local nobj = deepCopy(obj)
+	for key, _ in pairs(nobj.Properties) do
+		if not table.find(allowProperty, key) then
+			nobj.Properties[key] = nil
+		end
+	end
+	for i, child in ipairs(nobj.Children) do
+		nobj.Children[i] = removeProperties(child, allowProperty)
+	end
+	return nobj
+end
+
+
+local Newline
+local Filter
+local Tab
+
+type settings = {
+	filter: {[number]: boolean, allowProperty: {string} },
+	table: {},
+	newline: boolean,
+	tab: boolean,
+}
+
+local function TableToString(TableData: settings, IgnoredTables, DepthData, Path)
+	local Table = TableData
+	
+	if TableData.newline ~= nil then
+		Table = TableData.table
+		Newline = TableData.newline
+		Filter = TableData.filter
+		Tab = TableData.tab
+		if Filter[1] then
+			Table = removeProperties(TableData.table, Filter.allowProperty)
+		end
+	end
+	
 
 	IgnoredTables = IgnoredTables or {}
 
@@ -127,9 +167,18 @@ local function TableToString(TableData, IgnoredTables, DepthData, Path)
 		Result = Result .. LineTab .. Key .. ( Newline == true and ' = ' or '=') .. Value .. ';'
 	end
 
-	local result = IsEmpty and Result .. '}' or string.sub(Result,  1, -1) .. ( Newline == true and '\n' or "" ) .. TrailingTab .. '}'.. Semicolon
+	local result = IsEmpty and Result .. '}' or string.sub(Result,  1, -1) .. ( Newline == true and '\n' or "" ) .. TrailingTab .. '}' .. Semicolon
+	
+	local function fix(s)
+		local old_s
+		repeat
+			old_s = s
+			s = s:gsub('};}','}}')
+				:gsub(';}','}')
+		until s == old_s ; return s
+	end
 
-	return ( Newline==false and result
+	return ( Newline==false and fix(result)
 		or result
 		:gsub('};}','}}')
 		:gsub(';}','}')
