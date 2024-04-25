@@ -28,7 +28,7 @@ local table = ({...})[1]
 local minify = ({...})[2]
 local filter = ({...})[3]
 
-local _script = loadstring(workspace.TableToString.Value)({
+local _script = import('TableToString')({
 	table   = table,
 	newline = not minify,
 	tab     = not minify,
